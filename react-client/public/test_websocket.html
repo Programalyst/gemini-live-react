@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal WebSocket Test</title>
+</head>
+<body>
+    <h1>Minimal WebSocket Test</h1>
+    <p>Attempting to connect to: <strong id="serverUrlDisplay"></strong></p>
+    <div id="status">Connecting...</div>
+    <div id="messages"></div>
+    <hr>
+    <input type="text" id="messageInput" placeholder="Type message to send" value="Hello from HTML" />
+    <button onclick="sendMessage()">Send Message</button>
+    <button onclick="closeConnection()">Close Connection Manually</button>
+    <button onclick="connect()">Reconnect (if disconnected)</button>
+
+
+    <script>
+        const SERVER_URL = "ws://localhost:8080/ws_test"; // <--- MODIFIED ENDPOINT
+        let ws;
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const serverUrlDisplay = document.getElementById('serverUrlDisplay');
+
+        serverUrlDisplay.textContent = SERVER_URL;
+
+        function log(message) {
+            console.log(message); // Log to browser console
+            const p = document.createElement('p');
+            const timestamp = new Date().toLocaleTimeString();
+            p.textContent = `[${timestamp}] ${message}`;
+            messagesDiv.insertBefore(p, messagesDiv.firstChild); // Add new messages at the top
+        }
+
+        function connect() {
+            if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+                log("INFO: Already connected or connecting.");
+                return;
+            }
+
+            log("CLIENT: Attempting to connect to " + SERVER_URL);
+            statusDiv.textContent = "Connecting...";
+            ws = new WebSocket(SERVER_URL);
+
+            ws.onopen = function(event) {
+                statusDiv.textContent = "Status: Connected!";
+                log("CLIENT: WebSocket OPENED successfully.");
+            };
+
+            ws.onmessage = function(event) {
+                log("CLIENT: Message from server: " + event.data);
+                statusDiv.textContent = "Status: Message Received";
+            };
+
+            ws.onclose = function(event) {
+                statusDiv.textContent = "Status: Disconnected. Code: " + event.code + (event.reason ? " Reason: " + event.reason : "");
+                log("CLIENT: WebSocket CLOSED. Code: " + event.code + ", Reason: '" + event.reason + "', WasClean: " + event.wasClean);
+                ws = null; // Important to allow reconnect
+            };
+
+            ws.onerror = function(event) {
+                statusDiv.textContent = "Status: Error!";
+                // The 'event' for onerror is often not very detailed, just a generic Event object.
+                // The browser console usually has more specific error messages (like "Invalid frame header").
+                log("CLIENT: WebSocket ERROR. Check browser console for details.");
+                console.error("WebSocket Error Event:", event);
+            };
+        }
+
+        function sendMessage() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const message = messageInput.value;
+                if (message.trim() === "") {
+                    log("CLIENT: Message is empty, not sending.");
+                    return;
+                }
+                ws.send(message);
+                log("CLIENT: Sent to server: '" + message + "'");
+                // messageInput.value = ''; // Optionally clear input
+            } else {
+                log("CLIENT: WebSocket not open. Cannot send message.");
+                statusDiv.textContent = "Status: Not Connected. Cannot send.";
+            }
+        }
+
+        function closeConnection() {
+            if (ws) {
+                log("CLIENT: Attempting to close connection manually.");
+                ws.close(1000, "Client closed connection manually via button");
+            } else {
+                log("CLIENT: No active connection to close.");
+            }
+        }
+
+        // Automatically connect on page load
+        connect();
+    </script>
+</body>
+</html>

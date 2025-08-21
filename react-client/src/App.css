@@ -1,0 +1,72 @@
+.App {
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.connection-status {
+  margin: 5px
+}
+
+.video-container {
+  margin-top: 5px;
+  position: relative;
+  display: inline-block;
+}
+
+.video-area {
+  width: 800px;
+  height: 450px;
+  border: 1px solid grey;
+}
+
+.response-container {
+  margin-top: 20px;
+}
+
+.server-message-display {
+  width: 80%;
+  height: 100%;
+  max-width: 850px;
+  margin-top: 15px;
+  border: 1px solid grey;
+  margin-left: auto; 
+  margin-right: auto;
+  text-align: left;
+}
+
+.server-message {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.server-message-fc {
+  padding-left: 8px;
+  padding-right: 8px;
+  color: red;
+}
+
+.text-prompt-area {
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.prompt-input {
+  flex-grow: 1;
+  height: 40px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
