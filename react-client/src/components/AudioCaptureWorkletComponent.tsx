@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { pcm16ToBase64 } from '../utils/helpers';
 
 const PCM_PROCESSOR_URL = '/pcm-processor.js';
 const TARGET_SAMPLE_RATE = 16000;
@@ -13,26 +14,6 @@ const AudioCaptureWorkletComponent: React.FC = () => {
     const workletNodeRef = useRef<AudioWorkletNode | null>(null);
     const mediaStreamSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const userMediaStreamRef = useRef<MediaStream | null>(null);
-
-    // Function to convert Int16Array PCM to Base64
-    const pcm16ToBase64 = useCallback((pcm16Data: Int16Array): string => {
-        const buffer = pcm16Data.buffer; // Get the underlying ArrayBuffer
-        const uint8ArrayInstance = new Uint8Array(buffer);
-
-        let binaryString = '';
-        const chunkSize = 8192; // Mitigate String.fromCharCode call stack limits
-        for (let i = 0; i < uint8ArrayInstance.length; i += chunkSize) {
-            const chunk = uint8ArrayInstance.subarray(i, i + chunkSize);
-            binaryString += String.fromCharCode.apply(null, Array.from(chunk));
-        }
-        try {
-            return btoa(binaryString);
-        } catch (e) {
-            console.error("Error in btoa during pcm16ToBase64:", e);
-            return "";
-        }
-    }, []);
-
 
     const initializeAudioSystem = useCallback(async () => {
         if (audioContextRef.current && audioContextRef.current.state !== 'closed') {

@@ -1,6 +1,6 @@
 // src/hooks/useAudioCapture.ts
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { pcm16ToBase64 } from "../utils/helpers";
+import { pcm16ToBase64Async } from "../utils/helpers";
 
 const PCM_PROCESSOR_URL = '/pcm-processor.js';
 
@@ -25,9 +25,9 @@ export const useAudioCapture = (onAudioData: (base64: string) => void) => {
             });
             workletNodeRef.current = workletNode;
 
-            workletNode.port.onmessage = (event) => {
+            workletNode.port.onmessage = async (event) => {
                 if (event.data.type === 'audioData' && event.data.pcm16Data) {
-                    const base64Audio = pcm16ToBase64(event.data.pcm16Data);
+                    const base64Audio = await pcm16ToBase64Async(event.data.pcm16Data);
                     if (base64Audio) {
                         onAudioData(base64Audio);
                     }
