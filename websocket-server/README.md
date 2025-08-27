@@ -2,6 +2,7 @@
 
 ### 1. Install Python 3.11.7+
 Intall Python `3.11.7+` if you don't already have it installed. 
+
 `taskgroup`, `exceptiongroup` are built-in in `3.11.7+` so will not require a separate install and import
 
 ### 2. Switch to the backend folder
@@ -53,4 +54,6 @@ Option b: Run Voice-in-text-out version
 python voiceInTextOut.py
 ```
 
-Notes: in the Gemini config object, despite `response_modalities` being a list, only one response modality can be specified at a time: either "TEXT" or "AUDIO"
+Notes: 
+- in the Gemini config object, despite `response_modalities` being a list, only one response modality can be specified at a time: either "TEXT" or "AUDIO"
+- Add your own tools (function declarations) for function calling in `toolDeclarations.py`

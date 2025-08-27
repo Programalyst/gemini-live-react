@@ -17,8 +17,22 @@ export const useScreenShare = () => {
     const canvas = canvasRef.current;
     if (video.videoWidth === 0 || video.videoHeight === 0) return;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const maxWidth = 1024;
+    const originalWidth = video.videoWidth;
+    const originalHeight = video.videoHeight;
+
+    const aspectRatio = originalWidth / originalHeight;
+
+    let newWidth = originalWidth;
+    let newHeight = originalHeight;
+
+    if (newWidth > maxWidth) {
+      newWidth = maxWidth;
+      newHeight = newWidth / aspectRatio;
+    }
+
+    canvas.width = newWidth;
+    canvas.height = newHeight;
 
     //console.log("CaptureFrame: Capturing frame with dimensions:", canvas.width, "x", canvas.height);
     
